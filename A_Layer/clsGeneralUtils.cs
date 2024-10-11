@@ -98,24 +98,52 @@ namespace A_Layer
         /// <returns></returns>
         public static string GetDataType(string DataType)
         {
-            switch (DataType)
+            switch (DataType.ToLower())
             {
                 case "int":
                     return "int";
                 case "tinyint":
+                    return "byte";
+                case "smallint":
                     return "short";
-                case "nvarchar":
-                    return "string";
-                case "varchar":
-                    return "string";
-                case "datetime":
-                case "DateTime":
-                case "smalldatetime":
-                    return "DateTime";
-                case "smallmoney":
-                    return "float";
+                case "bigint":
+                    return "long";
                 case "bit":
                     return "bool";
+                case "decimal":
+                case "numeric":
+                    return "decimal";
+                case "float":
+                    return "double";
+                case "real":
+                    return "float";
+                case "money":
+                case "smallmoney":
+                    return "decimal";
+                case "char":
+                case "nchar":
+                case "varchar":
+                case "nvarchar":
+                case "text":
+                case "ntext":
+                    return "string";
+                case "datetime":
+                case "smalldatetime":
+                case "date":
+                case "time":
+                case "datetime2":
+                case "datetimeoffset":
+                    return "DateTime";
+                case "binary":
+                case "varbinary":
+                case "image":
+                    return "byte[]";
+                case "uniqueidentifier":
+                    return "Guid";
+                case "xml":
+                    return "XmlDocument";
+                case "sql_variant":
+                    return "object";
                 default:
                     return "unknown";  // يمكنك تغيير "unknown" إلى أي قيمة افتراضية تفضلها
             }
