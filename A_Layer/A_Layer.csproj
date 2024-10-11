@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="A_Layer.cs" />
+    <Compile Include="clsGeneralUtils.cs" />
+    <Compile Include="clsGeneratAccessLayer.cs" />
+    <Compile Include="clsGenerateStordProcedures.cs" />
     <Compile Include="clsGeneratSettings.cs" />
     <Compile Include="clsGeneratBussinessLayer.cs" />
     <Compile Include="clsSettingsClass.cs" />

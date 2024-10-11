@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using A_Layer;
 using GeneratSettings;
 namespace B_Layer
 {
@@ -12,11 +13,11 @@ namespace B_Layer
 
         public static DataTable GetAllDataBases()
         {
-            return clsDataAccessLAyer.GetAllDataBasses();
+            return clsGeneralUtils.GetAllDataBasses();
         }
         public static DataTable GetAllTables(string DataBase)
         {
-            return clsDataAccessLAyer.GetAlltables(DataBase);
+            return clsGeneralUtils.GetAlltables(DataBase);
         }
          public static string GeneratCodForTable(string TabelName)
         {
@@ -28,7 +29,7 @@ namespace B_Layer
         }
         public static void SetConnectionString(string ConnectionString)
         {
-            clsDataAccessLAyer.SetStringConnection(ConnectionString);
+            clsGeneralUtils.SetStringConnection(ConnectionString);
         }
       static  public string GeneratSettinges()
         {

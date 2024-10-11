@@ -147,7 +147,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.BackColor = System.Drawing.Color.Black;
+            this.tabPage1.BackColor = System.Drawing.Color.Linen;
             this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.label1);
@@ -356,13 +356,13 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(265, 34);
             this.button4.TabIndex = 7;
-            this.button4.Text = "Generat Cod AutoMaticly";
+            this.button4.Text = "Generat Cod Automaticly";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // label3
             // 
-            this.label3.BackColor = System.Drawing.Color.Black;
+            this.label3.BackColor = System.Drawing.Color.Linen;
             this.label3.Location = new System.Drawing.Point(-8, 50);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(1334, 36);
@@ -391,7 +391,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Black;
+            this.BackColor = System.Drawing.Color.Linen;
             this.ClientSize = new System.Drawing.Size(1333, 773);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button4);
