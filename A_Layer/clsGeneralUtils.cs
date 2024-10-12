@@ -156,28 +156,46 @@ namespace A_Layer
         /// <returns>A string that represents the parameters and their data types .</returns>
         public static string GetConvertType(string DataType)
         {
-            switch (DataType)
+            switch (DataType.ToLower().Trim())
             {
                 case "int":
                     return "Convert.ToInt32(";
+                case "byte":
+                case "tinyint":
+                    return "Convert.ToByte(";
                 case "string":
-                    return "Convert.ToString(";
                 case "nvarchar":
-                    return "Convert.ToString(";
                 case "varchar":
+                case "char":
                     return "Convert.ToString(";
-                case "DateTime":
+                case "datetime":
                     return "Convert.ToDateTime(";
                 case "bool":
+                case "bit":
                     return "Convert.ToBoolean(";
                 case "short":
+                case "smallint":
                     return "Convert.ToInt16(";
-                case "tinyint":  // 
-                    return "Convert.ToInt16(";
+
+                case "bigint":
+                    return "Convert.ToInt64(";
                 case "float":
                     return "Convert.ToSingle(";
+                case "real":
+                    return "Convert.ToSingle(";
+                case "double":
+                    return "Convert.ToDouble(";
+                case "decimal":
+                case "money":
+                case "smallmoney":
+                    return "Convert.ToDecimal(";
+                case "uniqueidentifier":
+                    return "Guid.Parse(";
+                case "binary":
+                case "varbinary":
+                    return "Convert.ToBase64String("; // لاستخدام تحويل بسيط للبيانات الثنائية كـ Base64
                 default:
-                    return "koko2";  // يمكنك تغيير هذه القيمة الافتراضية إذا أردت
+                    return "koko2";  // يمكنك تعديل هذه القيمة الافتراضية حسب الحاجة
             }
         }
         /// <summary>

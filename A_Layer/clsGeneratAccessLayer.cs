@@ -111,14 +111,14 @@ bool IsRead = false;
              try
              {{
                  connection.Open();
-                 SqlDataReader Reader = command.ExecuteReader();
+                 SqlDataReader reader = command.ExecuteReader();
            
-                 if (Reader.Read())
+                 if (reader.Read())
                  {{
                      IsRead = true;
 {GetInformationForRead(TableName)}
 }}
-                 Reader.Close();
+                 reader.Close();
              }}
              catch (Exception ex) {{ }}
              finally
@@ -127,7 +127,7 @@ bool IsRead = false;
              }}
              return IsRead;
         }}
-    }}  ";
+    }} }} ";
         return text;
     }
     public static string GeneratUpdateCod(string TableName)
@@ -239,7 +239,7 @@ SqlParameter parameter = new SqlParameter(""@IsSuccess"", SqlDbType.Bit)
         text += GeneratUpdateCod(TableName);
         text += GeneratDeleteCod(TableName);
         return @"using System;
- using System.Collections.Generic
+ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
