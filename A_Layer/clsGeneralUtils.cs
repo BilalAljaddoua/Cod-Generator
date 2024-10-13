@@ -19,7 +19,46 @@ namespace A_Layer
 
             public bool AllowNull;
         }
- 
+        public static stColumns GetPK(string TableName)
+        {
+            string text = "";
+            SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
+            sqlConnection.Open();
+            string cmdText = $@"SELECT 
+    COLUMN_NAME AS ColumnName,
+    DATA_TYPE AS DataType,
+    IS_NULLABLE AS AllowNull
+FROM 
+    INFORMATION_SCHEMA.COLUMNS
+WHERE 
+    TABLE_NAME = '{TableName}'
+    AND COLUMNPROPERTY(object_id(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1;
+";
+            SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
+            SqlDataReader Reader = sqlCommand.ExecuteReader();
+            stColumns PrimaryKey = new stColumns();
+            try
+            {
+
+                while (Reader.Read())
+                {
+                    PrimaryKey.ColumnName = Reader["ColumnName"].ToString();
+                    PrimaryKey.DataType = Reader["DataType"].ToString();
+                    PrimaryKey.AllowNull = (bool)Reader["AllowNull"];
+                }
+                Reader.Close();
+
+            }
+            catch (Exception ex) { }
+            finally
+            {
+            sqlConnection.Close();
+
+            }
+
+            return PrimaryKey  ;
+        }
+
         public static string GetPrimaryKey(string tableName)
         {
             string allColumnsFromTable = GetAllColumnsFromTable(tableName);

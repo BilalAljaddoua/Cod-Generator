@@ -23,7 +23,7 @@ public class clsDataAccessLAyer
     }
     private static string AddOneParameterWithValue(string TableName)
     {
-        return "\n command.Parameters.AddWithValue(\"@" + clsGeneralUtils.GetPrimaryKey(TableName) + "\", " + clsGeneralUtils.GetPrimaryKey(TableName) + ");";
+        return "\n command.Parameters.AddWithValue(\"@" + clsGeneralUtils.GetPK(TableName).ColumnName + "\", " + clsGeneralUtils.GetPK(TableName).ColumnName + ");";
     }
     private static string AddParameterWithDataType(string TableName, string Prefix = "")
     {
@@ -168,15 +168,15 @@ SqlParameter parameter = new SqlParameter(""@IsSuccess"", SqlDbType.Bit)
     }
     public static string GeneratDeleteCod(string TableName)
     {
-        string text2 = $@"static public bool Delete{TableName}()
+        string text2 = $@"static public bool Delete{TableName}({clsGeneralUtils.GetPK(TableName).DataType} {clsGeneralUtils.GetPK(TableName).ColumnName})
 {{
     using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
     {{
         using (SqlCommand command = new SqlCommand({clsGenerateStordProcedures.GeneratSP_ForDelete(TableName)}, connection))
         {{
             command.CommandType = CommandType.StoredProcedure;
-         //   command.Parameters.AddWithValue(""@PersonID"", PersonID);
-            SqlParameter parameter = new SqlParameter(""@IsSuccess"", SqlDbType.Bit)
+{AddOneParameterWithValue(TableName)} 
+SqlParameter parameter = new SqlParameter(""@IsSuccess"", SqlDbType.Bit)
             {{
                 Direction = ParameterDirection.Output
             }};
