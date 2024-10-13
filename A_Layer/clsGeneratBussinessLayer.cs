@@ -16,10 +16,16 @@ public class clsGeneratBussinessLayer
         string text = "";
         for (int i = 1; i < dataTypeAndColumnNamesAndNullble.Count; i++)
         {
-            text = text + dataTypeAndColumnNamesAndNullble[i].DataType + "? " + dataTypeAndColumnNamesAndNullble[i].ColumnName+"= null ;\t";
-          }
+            if (dataTypeAndColumnNamesAndNullble[i].DataType!="string")
+            text = text + dataTypeAndColumnNamesAndNullble[i].DataType + "? " + dataTypeAndColumnNamesAndNullble[i].ColumnName+"= null ;\t ";
+           else
+            {
+                text = text + dataTypeAndColumnNamesAndNullble[i].DataType +" " + dataTypeAndColumnNamesAndNullble[i].ColumnName + "= null ;\t";
 
-        return text + "\n";
+            }
+        }
+        
+         return text + "\n";
     }
     private static string GetAllColumnsFromTable(string TableName, string Seperator = "", string Prefix = "\n\t\t\t")
     {
@@ -67,13 +73,17 @@ public class clsGeneratBussinessLayer
         sqlConnection.Open();
         string cmdText = "\r\n                                                   SELECT COLUMN_NAME,DATA_TYPE \r\n                                                 FROM INFORMATION_SCHEMA.COLUMNS\r\n                                                 WHERE TABLE_NAME = '" + TableName + "' ";
         SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
-        SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-        while (sqlDataReader.Read())
+        SqlDataReader Reader = sqlCommand.ExecuteReader();
+        while (Reader.Read())
         {
-            text = text + Prefix + clsGeneralUtils.GetDataType(sqlDataReader.GetString(1)) + " " + sqlDataReader.GetString(0) + ",";
+            if(clsGeneralUtils.GetDataType(Reader.GetString(1)) !="string")
+            text = text + Prefix + clsGeneralUtils.GetDataType(Reader.GetString(1)) + "?  " + Reader.GetString(0) + ",";
+            else
+                text = text + Prefix + clsGeneralUtils.GetDataType(Reader.GetString(1)) + " " + Reader.GetString(0) + ",";
+
         }
 
-        sqlDataReader.Close();
+        Reader.Close();
         sqlConnection.Close();
         return text.Substring(0, text.Length - 1);
     }
@@ -87,7 +97,11 @@ public class clsGeneratBussinessLayer
         List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
         for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
         {
+            if (dataTypeAndColumnNamesAndNullble[i].DataType!="string")
             text = text + "        public   " + dataTypeAndColumnNamesAndNullble[i].DataType + " ?  " + dataTypeAndColumnNamesAndNullble[i].ColumnName + " { set; get; } \n";
+            else
+                text = text + "        public   " + dataTypeAndColumnNamesAndNullble[i].DataType + "    " + dataTypeAndColumnNamesAndNullble[i].ColumnName + " { set; get; } \n";
+
         }
         return text;
     }
@@ -128,7 +142,7 @@ public class clsGeneratBussinessLayer
     }
     private static string GeneratFind(string TableName)
     {
-        return "       static  public cls" + TableName + " Find" + TableName + "(int " + clsGeneralUtils.GetPrimaryKey(TableName) + ")\r\n           {\r\n                 " +
+        return "       static  public cls" + TableName + " Find" + TableName + "(int? " + clsGeneralUtils.GetPrimaryKey(TableName) + ")\r\n           {\r\n                 " +
             SetDefaultValues(TableName) + "\r\n               if(cls" + TableName + "Data.Find" + TableName + "(" +
             GetAllColumnsFromTable(TableName, "", " ref ") + "))\r\n               {\r\n                   return new cls" + TableName
             + "(" + GetAllColumnsFromTable(TableName, "", " ") + ");\r\n               }\r\n             return null;\r\n    }";

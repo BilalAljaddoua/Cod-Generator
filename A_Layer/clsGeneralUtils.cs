@@ -148,7 +148,6 @@ namespace A_Layer
                     return "unknown";  // يمكنك تغيير "unknown" إلى أي قيمة افتراضية تفضلها
             }
         }
-
         /// <summary>
         /// this function convert datatype for database to C# 
         /// </summary>
@@ -272,7 +271,6 @@ namespace A_Layer
             sqlConnection.Close();
             return list;
         }
-
         public static string GetAllColumnsFromTable(string TableName, string Seperator = "")
         {
             string text = "";

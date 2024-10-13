@@ -66,10 +66,10 @@ where
             catch (Exception ex) { IsSuccess = false; }
             finally { connection.Close(); }
 
-            if (IsSuccess)
+  
                 return $"\"SP_Update{TableName}Table\"";
-            else
-                return "\"We didn't create stored procedure\"";
+             
+  
         }
 
         //These Functions resposible to generate Insert Stored Proceder
@@ -126,10 +126,10 @@ SET @ID=SCOPE_IDENTITY();
             catch (Exception ex) { IsSuccess = false; }
             finally { connection.Close(); }
 
-            if (IsSuccess)
+  
                 return $"\"SP_InsertInto{TableName}Table\"";
-            else
-                return "\"We didn't create stored procedure\"";
+             
+  
         }
 
         //These Functions resposible to generate Select Stored Proceder
@@ -151,11 +151,9 @@ SET @ID=SCOPE_IDENTITY();
             }
             catch (Exception ex) { IsSuccess = false; }
             finally { connection.Close(); }
-
-            if (IsSuccess)
+             
                 return $"\"SP_SelectForm{TableName}Table\"";
-            else
-                return "\"We didn't create stored procedure\"";
+        
         }
 
         //These Functions resposible to generate Select Stored Proceder
@@ -179,10 +177,10 @@ SET @ID=SCOPE_IDENTITY();
             catch (Exception ex) { IsSuccess = false; }
             finally { connection.Close(); }
 
-            if (IsSuccess)
+  
                 return $"\"SP_FindForm{TableName}Table\"";
-            else
-                return "\"We didn't create stored procedure\"";
+             
+  
         }
 
         //These Functions resposible to generate Select Stored Proceder
@@ -206,11 +204,11 @@ SET @ID=SCOPE_IDENTITY();
             catch (Exception ex) { IsSuccess = false; }
             finally { connection.Close(); }
 
-            if (IsSuccess)
+  
                 return $"\"SP_DeleteForm{TableName}Table\"";
-            else
-                return "\"We didn't create stored procedure\"";
-        }
+
+             
+          }
 
 
 

@@ -32,13 +32,16 @@ public class clsDataAccessLAyer
         sqlConnection.Open();
         string cmdText = "\r\n    SELECT COLUMN_NAME,DATA_TYPE \r\n    FROM INFORMATION_SCHEMA.COLUMNS\r\n             WHERE TABLE_NAME = '" + TableName + "' ";
         SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
-        SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-        while (sqlDataReader.Read())
+        SqlDataReader reader = sqlCommand.ExecuteReader();
+        while (reader.Read())
         {
-            text = text + Prefix + clsGeneralUtils.GetDataType(sqlDataReader.GetString(1)) + " " + sqlDataReader.GetString(0) + ",";
+            if(clsGeneralUtils.GetDataType(reader.GetString(1)) !="string")
+            text = text + Prefix + clsGeneralUtils.GetDataType(reader.GetString(1)) + "?  " + reader.GetString(0) + ",";
+            else
+                text = text + Prefix + clsGeneralUtils.GetDataType(reader.GetString(1)) + " " + reader.GetString(0) + ",";
         }
 
-        sqlDataReader.Close();
+        reader.Close();
         sqlConnection.Close();
         return text.Substring(0, text.Length - 1);
     }
