@@ -42,6 +42,10 @@
             this.btnGeneratBussnissCod = new System.Windows.Forms.Button();
             this.btnGeneratFileBussniss = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txtBussness = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -59,10 +63,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.lbl1 = new System.Windows.Forms.Label();
             this.lbl2 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -222,6 +222,50 @@
             this.label2.Size = new System.Drawing.Size(180, 34);
             this.label2.TabIndex = 6;
             this.label2.Text = "Data Bussniss";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.BackColor = System.Drawing.Color.LightGray;
+            this.label7.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(30, 231);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(80, 34);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Table";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.BackColor = System.Drawing.Color.LightGray;
+            this.label6.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(30, 167);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(123, 34);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "Database";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.BackColor = System.Drawing.Color.LightGray;
+            this.label5.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(30, 101);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(128, 34);
+            this.label5.TabIndex = 6;
+            this.label5.Text = "Password";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.BackColor = System.Drawing.Color.LightGray;
+            this.label4.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(30, 35);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(150, 34);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "User Name";
             // 
             // label1
             // 
@@ -400,50 +444,6 @@
             this.lbl2.TabIndex = 8;
             this.lbl2.Text = " ";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.BackColor = System.Drawing.Color.LightGray;
-            this.label4.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(30, 35);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(150, 34);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "User Name";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.BackColor = System.Drawing.Color.LightGray;
-            this.label5.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(30, 101);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(128, 34);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Password";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.BackColor = System.Drawing.Color.LightGray;
-            this.label6.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(30, 167);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(123, 34);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Database";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.BackColor = System.Drawing.Color.LightGray;
-            this.label7.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(30, 231);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(80, 34);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Table";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -456,7 +456,7 @@
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.lbl2);
             this.Controls.Add(this.lbl1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";

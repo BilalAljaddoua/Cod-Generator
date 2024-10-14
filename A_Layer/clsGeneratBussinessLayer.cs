@@ -130,7 +130,7 @@ public class clsGeneratBussinessLayer
     }
     private static string GeneratAdd(string TableName)
     {
-        return "        private bool _Add" + TableName + "()\r\n        {    this." + clsGeneralUtils.GetPrimaryKey(TableName) + " = cls" + TableName + "Data.Add" + TableName + "(" + GetAllColumnsFromTable_064BWithoutFirstOne(TableName, "", " ") + ");\r\n            return (this." + clsGeneralUtils.GetPrimaryKey(TableName) + " != -1);\r\n        }";
+        return "        private bool _Add" + TableName + "()\r\n        {    this." + clsGeneralUtils.GetPrimaryKey(TableName) + " = cls" + TableName + "Data.AddTo" + TableName + "Table(" + GetAllColumnsFromTable_064BWithoutFirstOne(TableName, "", " ") + ");\r\n            return (this." + clsGeneralUtils.GetPrimaryKey(TableName) + " != -1);\r\n        }";
     }
     private static string GeneratGetAll(string TableName)
     {
@@ -138,7 +138,7 @@ public class clsGeneratBussinessLayer
     }
     private static string GeneratUpdate(string TableName)
     {
-        return "        private bool _Update" + TableName + "()\r\n        {            bool IsSuccess= cls" + TableName + "Data.Update" + TableName + "(" + GetAllColumnsFromTable_064BWithoutFirstOne(TableName, "", " ") + ");\r\n            return IsSuccess;\r\n        }";
+        return "        private bool _Update" + TableName + "()\r\n        {            bool IsSuccess= cls" + TableName + "Data.Update" + TableName + "Table(" + GetAllColumnsFromTable_064BWithoutFirstOne(TableName, "", " ") + ");\r\n            return IsSuccess;\r\n        }";
     }
     private static string GeneratFind(string TableName)
     {
