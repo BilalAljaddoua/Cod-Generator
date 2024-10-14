@@ -162,15 +162,15 @@ public class clsGeneratBussinessLayer
     {
         string text = "";
         text = text  + GeneratEnums();
-        text = text + "\n" + GeneratMethodes(TableName);
-        text = text + "\n" + GeneratDefalutConstructor(TableName);
-        text = text + "\n" + GeneratParameterConstructor(TableName);
-        text = text + "\n" + GeneratAdd(TableName);
-        text = text + "\n" + GeneratGetAll(TableName);
-        text = text + "\n" + GeneratUpdate(TableName);
-        text = text + "\n" + GeneratFind(TableName);
-        text = text + "\n" + GeneratDelete(TableName);
-        return text + "\n" + GeneratSave(TableName);
+        text = text + GeneratMethodes(TableName);
+        text = text + GeneratDefalutConstructor(TableName);
+        text = text + GeneratParameterConstructor(TableName);
+        text = text + GeneratAdd(TableName);
+        text = text + GeneratGetAll(TableName);
+        text = text + GeneratUpdate(TableName);
+        text = text + GeneratFind(TableName);
+        text = text + GeneratDelete(TableName);
+        return text + GeneratSave(TableName);
     }
     public static string GeneratDataBussiness(string TableName)
     {
