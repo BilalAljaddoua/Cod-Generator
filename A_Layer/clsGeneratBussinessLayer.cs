@@ -45,12 +45,16 @@ public class clsGeneratBussinessLayer
         sqlConnection.Close();
         return text.Substring(0, text.Length - 1);
     }
-    private static string GetAllColumnsFromTable_064BWithoutFirstOne(string TableName, string Seperator = "", string Prefix = "\n\t\t\t")
+     private static string GetAllColumnsFromTable_064BWithoutFirstOne(string TableName, string Seperator = "", string Prefix = "\n\t\t\t")
     {
         string text = "";
         SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
         sqlConnection.Open();
-        string cmdText = "\r\n                                                 SELECT COLUMN_NAME\r\n                                                 FROM INFORMATION_SCHEMA.COLUMNS\r\n                                                 WHERE TABLE_NAME = '" + TableName + "' ";
+        string cmdText = @"
+    SELECT COLUMN_NAME 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = '" + TableName + @"'  
+      AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 0  ";
         SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
         SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
         while (sqlDataReader.Read())
@@ -60,10 +64,9 @@ public class clsGeneratBussinessLayer
         }
 
         sqlDataReader.Close();
-        int num = text.IndexOf(",");
-        text = text.Substring(num + 1, text.Length - num - 1);
+        sqlConnection.Close();  
         text = text.Substring(0, text.Length - 1);
-        sqlConnection.Close();
+
         return text;
     }
     private static string AddParameterWithDataType(string TableName, string Prefix = "")
@@ -138,7 +141,7 @@ public class clsGeneratBussinessLayer
     }
     private static string GeneratUpdate(string TableName)
     {
-        return "        private bool _Update" + TableName + "()\r\n        {            bool IsSuccess= cls" + TableName + "Data.Update" + TableName + "Table(" + GetAllColumnsFromTable_064BWithoutFirstOne(TableName, "", " ") + ");\r\n            return IsSuccess;\r\n        }";
+        return "        private bool _Update" + TableName + "()\r\n        {            bool IsSuccess= cls" + TableName + "Data.Update" + TableName + "Table(" + clsGeneralUtils.GetAllColumnNames(TableName, "", " ") + ");\r\n            return IsSuccess;\r\n        }";
     }
     private static string GeneratFind(string TableName)
     {

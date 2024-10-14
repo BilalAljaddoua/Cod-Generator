@@ -58,7 +58,51 @@ WHERE
 
             return PrimaryKey  ;
         }
+        public static string GetAllColumnNames(string TableName, string Seperator = "", string Prefix = "\n\t\t\t")
+        {
+            string text = "";
+            SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
+            sqlConnection.Open();
+            string cmdText = @"
+    SELECT COLUMN_NAME 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = '" + TableName + "'";
+            SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            while (sqlDataReader.Read())
+            {
+                string @string = sqlDataReader.GetString(0);
+                text = text + Prefix + Seperator + @string + ",";
+            }
 
+            sqlDataReader.Close();
+            text = text.Substring(0, text.Length - 1);
+            sqlConnection.Close();
+            return text;
+        }
+        public static string GetAllColumnNamesWithoutIdintities(string TableName, string Seperator = "", string Prefix = "\n\t\t\t")
+        {
+            string text = "";
+            SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
+            sqlConnection.Open();
+            string cmdText = @"
+    SELECT COLUMN_NAME 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = '" + TableName + @"'  
+      AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 0  ";
+            SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            while (sqlDataReader.Read())
+            {
+                string @string = sqlDataReader.GetString(0);
+                text = text + Prefix + Seperator + @string + ",";
+            }
+
+            sqlDataReader.Close();
+            text = text.Substring(0, text.Length - 1);
+            sqlConnection.Close();
+            return text;
+        }
         public static string GetPrimaryKey(string tableName)
         {
             string allColumnsFromTable = GetAllColumnsFromTable(tableName);
