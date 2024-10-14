@@ -161,16 +161,16 @@ public class clsGeneratBussinessLayer
     public static string GeneratBadyCod(string TableName)
     {
         string text = "";
-        text = text + "\n\n" + GeneratEnums();
-        text = text + "\n\n" + GeneratMethodes(TableName);
-        text = text + "\n\n" + GeneratDefalutConstructor(TableName);
-        text = text + "\n\n" + GeneratParameterConstructor(TableName);
-        text = text + "\n\n" + GeneratAdd(TableName);
-        text = text + "\n\n" + GeneratGetAll(TableName);
-        text = text + "\n\n" + GeneratUpdate(TableName);
-        text = text + "\n\n" + GeneratFind(TableName);
-        text = text + "\n\n" + GeneratDelete(TableName);
-        return text + "\n\n" + GeneratSave(TableName);
+        text = text  + GeneratEnums();
+        text = text + "\n" + GeneratMethodes(TableName);
+        text = text + "\n" + GeneratDefalutConstructor(TableName);
+        text = text + "\n" + GeneratParameterConstructor(TableName);
+        text = text + "\n" + GeneratAdd(TableName);
+        text = text + "\n" + GeneratGetAll(TableName);
+        text = text + "\n" + GeneratUpdate(TableName);
+        text = text + "\n" + GeneratFind(TableName);
+        text = text + "\n" + GeneratDelete(TableName);
+        return text + "\n" + GeneratSave(TableName);
     }
     public static string GeneratDataBussiness(string TableName)
     {
