@@ -92,7 +92,7 @@ public class clsGeneratBussinessLayer
     }
     public static string GeneratEnums()
     {
-        return "        public enum enMode { AddNew = 0, Update = 1 };\n        public enMode Mode = enMode.AddNew;";
+        return "        public enum enMode { AddNew = 0, Update = 1 };\n        public enMode Mode = enMode.AddNew;\n";
     }
     private static string GeneratMethodes(string TableName)
     {
