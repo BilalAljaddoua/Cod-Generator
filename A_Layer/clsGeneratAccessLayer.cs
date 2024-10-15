@@ -90,6 +90,7 @@ public class clsDataAccessLAyer
     }
     public static string GeneratInsertCod(string TabelName)
     {
+        clsGeneralUtils.stColumns PK=clsGeneralUtils.GetPK(TabelName);
         string text = $@"
 static public  int ? AddTo{TabelName}Table({AddAllParameterWithDataTypeForInsert(TabelName)})
 {{
@@ -99,24 +100,24 @@ static public  int ? AddTo{TabelName}Table({AddAllParameterWithDataTypeForInsert
         {{
               command.CommandType = CommandType.StoredProcedure;
 {AddAllParameterWithValueForInsert(TabelName)}
-SqlParameter parameter = new SqlParameter(""@ID"", SqlDbType.Int)
+SqlParameter parameter = new SqlParameter(""@{PK.ColumnName}"", SqlDbType.Int)
              {{
                  Direction = ParameterDirection.Output
              }};
              command.Parameters.Add(parameter);
-             int ? ID =null;
+             int ? {PK.ColumnName} =null;
              try
              {{
                  connection.Open();
                  command.ExecuteNonQuery();
-                 ID = (int)command.Parameters[""@ID""].Value;
+                 {PK.ColumnName} = ({clsGeneralUtils.GetDataType(PK.DataType)})command.Parameters[""@{PK.ColumnName}""].Value;
              }}
              catch (Exception ex) {{ }}
              finally
              {{
                  connection.Close();
              }}
-             return ID;
+             return {PK.ColumnName};
         }}
     }}
 }}
