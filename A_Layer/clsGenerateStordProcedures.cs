@@ -16,7 +16,7 @@ namespace A_Layer
         //These Functions resposible to generate Update Stored Proceder
         public static string GenerateParameterForUpdate(string TableName)
         {
-            List<clsGeneralUtils.stColumns> columns = clsGeneralUtils.GetDataTypeAndColumnNamesForSP(TableName);
+            List<clsGeneralUtils.stColumns> columns = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
             string PreperParameters = "";
 
             for (int i = 0; i < columns.Count; i++)
@@ -75,7 +75,7 @@ where
         //These Functions resposible to generate Insert Stored Proceder
         public static string GenerateParameterForInsert(string TableName)
         {
-            List<clsGeneralUtils.stColumns> columns = clsGeneralUtils.GetDataTypeAndColumnNamesForSP(TableName);
+            List<clsGeneralUtils.stColumns> columns = clsGeneralUtils.GetDataTypeAndColumnNamesWithoutPK(TableName);
             string PreperParameters = "";
 
             for (int i = 0; i < columns.Count; i++)
@@ -87,12 +87,15 @@ where
                 else
                     PreperParameters += $@"@{columns[i].ColumnName}  {columns[i].DataType} ," + "\n";
             }
-            PreperParameters += "@ID INT output";
+            clsGeneralUtils.stColumns PK = clsGeneralUtils.GetPK(TableName);
+            PreperParameters += $"@{PK.ColumnName}  {PK.DataType} output";
 
             return PreperParameters;
         }
         public static string GetInsertQuery(string TableName)
         {
+            clsGeneralUtils.stColumns PK = clsGeneralUtils.GetPK(TableName);
+           
             string Query = $@"
 INSERT INTO {TableName}
 (
@@ -100,11 +103,9 @@ INSERT INTO {TableName}
 VALUES
 ({clsGeneralUtils.GetAllColumnsWithoutFirstOneForInsert(TableName, "@")})
 
-SET @ID=SCOPE_IDENTITY();
+SET @{PK.ColumnName}=SCOPE_IDENTITY();
 ";
             return Query;
-
-
         }
         public static string GeneratSP_ForInsert(string TableName)
         {
@@ -133,7 +134,6 @@ SET @ID=SCOPE_IDENTITY();
         }
 
         //These Functions resposible to generate Select Stored Proceder
-
         public static string GeneratSP_ForSelect(string TableName)
         {
             string Scrept = $@" CREATE PROCEDURE SP_SelectForm{TableName}Table
@@ -155,7 +155,6 @@ SET @ID=SCOPE_IDENTITY();
                 return $"\"SP_SelectForm{TableName}Table\"";
         
         }
-
         //These Functions resposible to generate Select Stored Proceder
         public static string GeneratSP_ForFind(string TableName)
         {
@@ -182,7 +181,6 @@ SET @ID=SCOPE_IDENTITY();
              
   
         }
-
         //These Functions resposible to generate Select Stored Proceder
         public static string GeneratSP_ForDelete(string TableName)
         {

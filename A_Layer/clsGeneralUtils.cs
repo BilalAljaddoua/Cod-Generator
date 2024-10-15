@@ -21,8 +21,7 @@ namespace A_Layer
         }
         public static stColumns GetPK(string TableName)
         {
-            string text = "";
-            SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
+             SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
             sqlConnection.Open();
             string cmdText = $@"SELECT 
     COLUMN_NAME AS ColumnName,
@@ -105,9 +104,8 @@ WHERE
         }
         public static string GetPrimaryKey(string tableName)
         {
-            string allColumnsFromTable = GetAllColumnsFromTable(tableName);
-            int length = allColumnsFromTable.IndexOf(",");
-            return allColumnsFromTable.Substring(0, length).Trim();
+            stColumns PK= GetPK(tableName);
+            return PK.ColumnName;
         }
         /// <summary>
         /// this function responsible to get all names for databases .
@@ -305,7 +303,9 @@ WHERE
         {
             List<stColumns> list = new List<stColumns>();
             stColumns item = default(stColumns);
-            string cmdText = "SELECT DATA_TYPE, COLUMN_NAME, IS_NULLABLE \r\n           FROM INFORMATION_SCHEMA.COLUMNS\r\n                                         WHERE TABLE_NAME = '" + TabelName + "' ";
+            string cmdText = $@"SELECT DATA_TYPE, COLUMN_NAME, IS_NULLABLE 
+                                               FROM INFORMATION_SCHEMA.COLUMNS
+                                                WHERE TABLE_NAME = '" + TabelName + "' ";
             SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
             sqlConnection.Open();
             SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
@@ -330,11 +330,19 @@ WHERE
         /// </summary>
         /// <param name="TabelName"></param>
         /// <returns>A string that represents the parameters and their data types .</returns>
-        public static List<stColumns> GetDataTypeAndColumnNamesForSP(string TabelName)
+        public static List<stColumns> GetDataTypeAndColumnNamesWithoutPK(string TabelName)
         {
             List<stColumns> list = new List<stColumns>();
             stColumns item = default(stColumns);
-            string cmdText = "SELECT DATA_TYPE, COLUMN_NAME, IS_NULLABLE \r\n           FROM INFORMATION_SCHEMA.COLUMNS\r\n                                         WHERE TABLE_NAME = '" + TabelName + "' ";
+            string cmdText = @"SELECT DATA_TYPE, COLUMN_NAME, IS_NULLABLE 
+                   FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = '" + TabelName + @"' 
+                   AND COLUMN_NAME NOT IN(
+                       SELECT COLUMN_NAME
+                       FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                       WHERE TABLE_NAME = '" + TabelName + @"'
+                       AND OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA +'.' + CONSTRAINT_NAME), 'IsPrimaryKey') = 1
+                   )";
             SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
             sqlConnection.Open();
             SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
