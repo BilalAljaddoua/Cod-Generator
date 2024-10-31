@@ -69,45 +69,11 @@ public class clsGeneratBussinessLayer
 
         return text;
     }
-    private static string AddParameterWithDataType(string TableName, string Prefix = "")
-    {
-        string text = "";
-        SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
-        sqlConnection.Open();
-        string cmdText = "\r\n                                                   SELECT COLUMN_NAME,DATA_TYPE \r\n                                                 FROM INFORMATION_SCHEMA.COLUMNS\r\n                                                 WHERE TABLE_NAME = '" + TableName + "' ";
-        SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
-        SqlDataReader Reader = sqlCommand.ExecuteReader();
-        while (Reader.Read())
-        {
-            if(clsGeneralUtils.GetDataType(Reader.GetString(1)) !="string")
-            text = text + Prefix + clsGeneralUtils.GetDataType(Reader.GetString(1)) + "?  " + Reader.GetString(0) + ",";
-            else
-                text = text + Prefix + clsGeneralUtils.GetDataType(Reader.GetString(1)) + " " + Reader.GetString(0) + ",";
-
-        }
-
-        Reader.Close();
-        sqlConnection.Close();
-        return text.Substring(0, text.Length - 1);
-    }
     public static string GeneratEnums()
     {
         return "        public enum enMode { AddNew = 0, Update = 1 };\n        public enMode Mode = enMode.AddNew;\n";
     }
-    private static string GeneratMethodes(string TableName)
-    {
-        string text = "";
-        List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
-        for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
-        {
-            if (dataTypeAndColumnNamesAndNullble[i].DataType!="string")
-            text = text + "        public   " + dataTypeAndColumnNamesAndNullble[i].DataType + " ?  " + dataTypeAndColumnNamesAndNullble[i].ColumnName + " { set; get; } \n";
-            else
-                text = text + "        public   " + dataTypeAndColumnNamesAndNullble[i].DataType + "    " + dataTypeAndColumnNamesAndNullble[i].ColumnName + " { set; get; } \n";
 
-        }
-        return text;
-    }
     private static string GeneratDefalutConstructor(string TableName)
     {
         string text = "    public       cls" + TableName + "(){";
@@ -119,21 +85,9 @@ public class clsGeneratBussinessLayer
         text += "         Mode = enMode.AddNew;\n";
         return text + "}";
     }
-    private static string GeneratParameterConstructor(string TableName)
-    {
-        string text = "           cls" + TableName + "(" + AddParameterWithDataType(TableName) + "){";
-        List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
-        for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
-        {
-            text = text + "        this. " + dataTypeAndColumnNamesAndNullble[i].ColumnName + "=" + dataTypeAndColumnNamesAndNullble[i].ColumnName + ";\n";
-        }
-
-        text += "         Mode = enMode.Update;\r\n";
-        return text + "}";
-    }
     private static string GeneratAdd(string TableName)
     {
-        return "        private bool _Add" + TableName + "()\r\n        {    this." + clsGeneralUtils.GetPrimaryKey(TableName) + " = cls" + TableName + "Data.AddTo" + TableName + "Table(" + GetAllColumnsFromTable_064BWithoutFirstOne(TableName, "", " ") + ");\r\n            return (this." + clsGeneralUtils.GetPrimaryKey(TableName) + " != -1);\r\n        }";
+        return "        private bool _Add" + TableName + "()\r\n        {    this." + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + " = cls" + TableName + "Data.AddTo" + TableName + "Table(" + GetAllColumnsFromTable_064BWithoutFirstOne(TableName, "", " ") + ");\r\n            return (this." + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + " != -1);\r\n        }";
     }
     private static string GeneratGetAll(string TableName)
     {
@@ -145,14 +99,14 @@ public class clsGeneratBussinessLayer
     }
     private static string GeneratFind(string TableName)
     {
-        return "       static  public cls" + TableName + " Find" + TableName + "(int? " + clsGeneralUtils.GetPrimaryKey(TableName) + ")\r\n           {\r\n                 " +
+        return "       static  public cls" + TableName + " Find" + TableName + "(int? " + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ")\r\n           {\r\n                 " +
             SetDefaultValues(TableName) + "\r\n               if(cls" + TableName + "Data.Find" + TableName + "(" +
             GetAllColumnsFromTable(TableName, "", " ref ") + "))\r\n               {\r\n                   return new cls" + TableName
             + "(" + GetAllColumnsFromTable(TableName, "", " ") + ");\r\n               }\r\n             return null;\r\n    }";
     }
     private static string GeneratDelete(string TableName)
     {
-        return "           static bool Delete" + TableName + "(int " + clsGeneralUtils.GetPrimaryKey(TableName) + ")\r\n        {\r\n              return cls" + TableName + "Data.Delete" + TableName + "(" + clsGeneralUtils.GetPrimaryKey(TableName) + ");\r\n        }";
+        return "           static bool Delete" + TableName + "(int " + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ")\r\n        {\r\n              return cls" + TableName + "Data.Delete" + TableName + "(" + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ");\r\n        }";
     }
     private static string GeneratSave(string TableName)
     {
@@ -162,9 +116,9 @@ public class clsGeneratBussinessLayer
     {
         string text = "";
         text = text  + GeneratEnums();
-        text = text + GeneratMethodes(TableName);
+        text = text + clsGeneralUtils.GeneratMethodesForClass(TableName);
         text = text + GeneratDefalutConstructor(TableName);
-        text = text + GeneratParameterConstructor(TableName);
+        text = text + clsGeneralUtils.GeneratParameterConstructor(TableName);
         text = text + GeneratAdd(TableName);
         text = text + GeneratGetAll(TableName);
         text = text + GeneratUpdate(TableName);

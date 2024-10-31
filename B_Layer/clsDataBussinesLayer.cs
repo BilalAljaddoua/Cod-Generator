@@ -10,7 +10,10 @@ namespace B_Layer
 {
     public class clsDataBussinesLayer
     {
-
+        public static void SetApplicationName(string AppName)
+        {
+            clsGeneralUtils.ApplicationName = AppName;
+        }
         public static DataTable GetAllDataBases()
         {
             return clsGeneralUtils.GetAllDataBasses();

@@ -74,6 +74,7 @@ DataTable dtTabelNames=new DataTable();
         private void cbDatabase_SelectedIndexChanged(object sender, EventArgs e)
         {
             cbAllTables.Enabled = true;
+            clsDataBussinesLayer.SetApplicationName(cbDatabase.Text);
             string ConnectionString = $"Server=.;Database={cbDatabase.Text.ToString().Trim()};User Id={txtUsernamr.Text.ToString().Trim()};Password={txtPassword.Text.ToString().Trim()};";
             clsDataBussinesLayer.SetConnectionString(ConnectionString);
             DataTable dt = clsDataBussinesLayer.GetAllTables(cbDatabase.Text);

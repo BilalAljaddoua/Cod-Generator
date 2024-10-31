@@ -28,7 +28,7 @@ namespace A_Layer
                 else
                     PreperParameters += $@"@{columns[i].ColumnName}  {columns[i].DataType} ," + "\n";
             }
-            PreperParameters = PreperParameters.Substring(0, PreperParameters.Length - 2);
+            PreperParameters += "@IsSuccess BIT OUTPUT";
             return PreperParameters;
         }
         public static string GetUpdateQuery(string TableName)
@@ -38,7 +38,8 @@ UPDATE {TableName}
 set
 {clsGeneralUtils.GetAllColumnsWithoutFirstOneForUpdate(TableName, "@")}
 where
-{clsGeneralUtils.GetPrimaryKey(TableName)}=@{clsGeneralUtils.GetPrimaryKey(TableName)}
+{clsGeneralUtils.GetNameOfPrimaryKey(TableName)}=@{clsGeneralUtils.GetNameOfPrimaryKey(TableName)}
+
 
 
 ";
@@ -54,6 +55,11 @@ where
             as
             begin
             {GetUpdateQuery(TableName)}
+            if @@ROWCOUNT>0
+            set @IsSuccess=1;
+            else
+            set @IsSuccess=0
+           
             end";
             SqlConnection connection = new SqlConnection(clsSettingsClass.ConnectionString);
             connection.Open();
@@ -140,6 +146,7 @@ SET @{PK.ColumnName}=SCOPE_IDENTITY();
             as
             begin
              SELECT * FROM {TableName}
+              order by  {clsGeneralUtils.GetNameOfPrimaryKey(TableName)}  desc 
             end";
             SqlConnection connection = new SqlConnection(clsSettingsClass.ConnectionString);
             connection.Open();
@@ -159,11 +166,11 @@ SET @{PK.ColumnName}=SCOPE_IDENTITY();
         public static string GeneratSP_ForFind(string TableName)
         {
             string Scrept = $@" CREATE PROCEDURE SP_FindForm{TableName}Table
-            @{clsGeneralUtils.GetPrimaryKey(TableName)} int
+            @{clsGeneralUtils.GetNameOfPrimaryKey(TableName)} int
             as
             begin
              SELECT * FROM {TableName}
-             where {clsGeneralUtils.GetPrimaryKey(TableName)} = @{clsGeneralUtils.GetPrimaryKey(TableName)}
+             where {clsGeneralUtils.GetNameOfPrimaryKey(TableName)} = @{clsGeneralUtils.GetNameOfPrimaryKey(TableName)}
             end";
             SqlConnection connection = new SqlConnection(clsSettingsClass.ConnectionString);
             connection.Open();
@@ -185,11 +192,11 @@ SET @{PK.ColumnName}=SCOPE_IDENTITY();
         public static string GeneratSP_ForDelete(string TableName)
         {
             string Scrept = $@" CREATE PROCEDURE SP_DeleteForm{TableName}Table
-            @{clsGeneralUtils.GetPrimaryKey(TableName)} int
+            @{clsGeneralUtils.GetNameOfPrimaryKey(TableName)} int
             as
             begin
              DELETE FROM {TableName}
-             where {clsGeneralUtils.GetPrimaryKey(TableName)} = @{clsGeneralUtils.GetPrimaryKey(TableName)}
+             where {clsGeneralUtils.GetNameOfPrimaryKey(TableName)} = @{clsGeneralUtils.GetNameOfPrimaryKey(TableName)}
             end";
             SqlConnection connection = new SqlConnection(clsSettingsClass.ConnectionString);
             connection.Open();

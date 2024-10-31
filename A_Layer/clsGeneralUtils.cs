@@ -11,6 +11,7 @@ namespace A_Layer
 {
     public class clsGeneralUtils
     {
+        public static string ApplicationName;
         public   struct stColumns
         {
             public string DataType;
@@ -102,7 +103,7 @@ WHERE
             sqlConnection.Close();
             return text;
         }
-        public static string GetPrimaryKey(string tableName)
+        public static string GetNameOfPrimaryKey(string tableName)
         {
             stColumns PK= GetPK(tableName);
             return PK.ColumnName;
@@ -428,8 +429,106 @@ WHERE
             sqlConnection.Close();
             return text;
         }
+        private static string AddParameterWithDataType(string TableName, string Prefix = "")
+        {
+            string text = "";
+            SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
+            sqlConnection.Open();
+            string cmdText = "\r\n                                                   SELECT COLUMN_NAME,DATA_TYPE \r\n                                                 FROM INFORMATION_SCHEMA.COLUMNS\r\n                                                 WHERE TABLE_NAME = '" + TableName + "' ";
+            SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
+            SqlDataReader Reader = sqlCommand.ExecuteReader();
+            while (Reader.Read())
+            {
+                if (clsGeneralUtils.GetDataType(Reader.GetString(1)) != "string")
+                    text = text + Prefix + clsGeneralUtils.GetDataType(Reader.GetString(1)) + "?  " + Reader.GetString(0) + ",";
+                else
+                    text = text + Prefix + clsGeneralUtils.GetDataType(Reader.GetString(1)) + " " + Reader.GetString(0) + ",";
 
+            }
 
+            Reader.Close();
+            sqlConnection.Close();
+            return text.Substring(0, text.Length - 1);
+        }
+        public static string GeneratMethodesForClass(string TableName)
+        {
+            string text = "";
+            List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
+            for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
+            {
+                if (dataTypeAndColumnNamesAndNullble[i].DataType != "string")
+                    text = text + "        public   " + dataTypeAndColumnNamesAndNullble[i].DataType + " ?  " + dataTypeAndColumnNamesAndNullble[i].ColumnName + " { set; get; } \n";
+                else
+                    text = text + "        public   " + dataTypeAndColumnNamesAndNullble[i].DataType + "    " + dataTypeAndColumnNamesAndNullble[i].ColumnName + " { set; get; } \n";
+
+            }
+            return text;
+        }
+        public static string GeneratParameterConstructor(string TableName)
+        {
+            string text = "           cls" + TableName + "(" + AddParameterWithDataType(TableName) + "){";
+            List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
+            for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
+            {
+                text = text + "        this. " + dataTypeAndColumnNamesAndNullble[i].ColumnName + "=" + dataTypeAndColumnNamesAndNullble[i].ColumnName + ";\n";
+            }
+
+            text += "         Mode = enMode.Update;\r\n";
+            return text + "}";
+        }
+        public static string GeneratEnumsForDTO()
+        {
+            return "        public enum enMode { AddNew = 0, Update = 1 };\n        public enMode Mode { set; get; }\n";
+        }
+        private static string AddAllParameterWithDataTypeConstructorDTO(string TabelName, string Prefix = "")
+        {
+            string text = "";
+            SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
+            sqlConnection.Open();
+            string cmdText = @"SELECT COLUMN_NAME,DATA_TYPE, IS_NULLABLE 
+                   FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = '" + TabelName +"'   ";
+            
+            SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
+            SqlDataReader reader = sqlCommand.ExecuteReader();
+            while (reader.Read())
+            {
+                if (clsGeneralUtils.GetDataType(reader.GetString(1)) != "string")
+                    text = text + Prefix + clsGeneralUtils.GetDataType(reader.GetString(1)) + "?  " + reader.GetString(0) + ",";
+                else
+                    text = text + Prefix + clsGeneralUtils.GetDataType(reader.GetString(1)) + " " + reader.GetString(0) + ",";
+            }
+
+            reader.Close();
+            sqlConnection.Close();
+            return text.Substring(0, text.Length - 1);
+        }
+
+        public static string GeneratMethodesForDTO(string TableName)
+        {
+            string text = "";
+            List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
+            for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
+            {
+                if (dataTypeAndColumnNamesAndNullble[i].DataType != "string")
+                    text = text + "        public   " + dataTypeAndColumnNamesAndNullble[i].DataType + " ?  " + dataTypeAndColumnNamesAndNullble[i].ColumnName + " { set; get; } \n";
+                else
+                    text = text + "        public   " + dataTypeAndColumnNamesAndNullble[i].DataType + "    " + dataTypeAndColumnNamesAndNullble[i].ColumnName + " { set; get; } \n";
+
+            }
+            return text;
+        }
+        public static string GeneratParameterConstructoForDTO(string TableName)
+        {
+            string text = "          public cls" + TableName +"DTO"+ $"( {AddAllParameterWithDataTypeConstructorDTO(TableName)} ){{";
+            List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
+            for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
+            {
+                text = text + "        this. " + dataTypeAndColumnNamesAndNullble[i].ColumnName + $"= " +dataTypeAndColumnNamesAndNullble[i].ColumnName + ";\n";
+            }
+
+             return text + "}";
+        }
 
 
     }
