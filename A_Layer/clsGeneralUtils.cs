@@ -522,6 +522,10 @@ WHERE
         }
         public static string GeneratParameterConstructoForDTO(string TableName)
         {
+            string Comment = $@"
+        /// <summary>
+        /// Initializes a new instance of the <see cref=""cls{TableName}DTO""/> class with specified properties.
+        /// </summary>"+"\n";
             string text = "          public cls" + TableName +"DTO"+ $"( {AddAllParameterWithDataTypeConstructorDTO(TableName)} ){{";
             List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
             for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
@@ -529,7 +533,7 @@ WHERE
                 text = text + "        this. " + dataTypeAndColumnNamesAndNullble[i].ColumnName + $"= " +dataTypeAndColumnNamesAndNullble[i].ColumnName + ";\n";
             }
 
-             return text + "}";
+             return Comment+text + "}";
         }
 
 

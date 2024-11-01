@@ -71,10 +71,31 @@ public class clsGeneratBussinessLayer
     }
     public static string GeneratEnums()
     {
-        return "        public enum enMode { AddNew = 0, Update = 1 };\n        public enMode Mode  { set; get; }\n";
+        string Comment = $@"
+        /// <summary>
+        /// Enumeration representing the mode of the operation (Add or Update).
+        /// </summary>"+"\n";
+        string Text= @"        public enum enMode { AddNew = 0, Update = 1 };
+
+        /// <summary>
+        /// Gets or sets the mode of the operation (AddNew or Update).
+        /// </summary>
+       public enMode Mode  { set; get; }
+";
+        return Comment + Text;
     }
     public static string GeneratParameterConstructor(string TableName)
-    { 
+    {
+        string Commint = $@"
+        /// <summary>
+        /// Initializes a new instance of the <see cref=""cls{TableName}""/> class with the specified DTO and mode.
+        /// </summary>
+        /// <param name=""{TableName}DTO"">The DTO object containing {TableName.Substring(0, TableName.Length - 1)} data.</param>
+        /// <param name=""nMode"">The mode of the operation (default is AddNew).</param>"+"\n";
+        string Comment = $@"
+    /// <summary>
+    /// Represents a business layer class for managing {TableName.Substring(0, TableName.Length - 1)} operations and interactions.
+    /// </summary>" +"\n";
         string text = "        public   cls" + TableName + $"(cls{TableName}DTO {TableName}DTO,enMode nMode = enMode.AddNew){{";
         List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
         for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
@@ -83,11 +104,14 @@ public class clsGeneratBussinessLayer
         }
 
         text += "         this.Mode = nMode;\r\n";
-        return text + "}";
+        return Comment+text + "}";
     }
-
     private static string GeneratDTO_Method(string TableName)
     {
+        string Comment = $@"
+        /// <summary>
+        /// Gets the Data Transfer Object (DTO) representing the current {TableName.Substring(0, TableName.Length - 1)}.
+        /// </summary>"+"\n";
         string text = $"    public       cls{TableName}DTO {TableName.Substring(0,1)}DTO {{\n";
         List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
         text += $@" get{{return new cls{TableName}DTO("+"\n";
@@ -96,44 +120,84 @@ public class clsGeneratBussinessLayer
             text += "        this." + dataTypeAndColumnNamesAndNullble[i].ColumnName + ", \n"; 
         }
         text=text.Substring(0, text.Length - 3);
-        return text + ");}}";
+        return Comment+text + ");}}";
     }
     private static string GeneratAdd(string TableName)
     {
-        return $@"        private bool _Add{ TableName } () 
+        string Comment=$@"
+        /// <summary>
+        /// Adds a new {TableName.Substring(0, TableName.Length - 1)} to the database.
+        /// </summary>
+        /// <returns>True if the {TableName.Substring(0, TableName.Length - 1)} was added successfully; otherwise, false.</returns>
+";
+        string Text= $@"        private bool _Add{ TableName } () 
 {{    this.{  clsGeneralUtils.GetNameOfPrimaryKey(TableName) } = cls{ TableName}Data.AddTo{ TableName}Table({TableName.Substring(0,1)}DTO);  
 return (this.{clsGeneralUtils.GetNameOfPrimaryKey(TableName)} != null);        }}";
+
+        return Comment + Text;
     }
     private static string GeneratGetAll(string TableName)
     {
-        return $"        static public List<cls{TableName}DTO> GetAll" + TableName + "()\r\n        {\r\n                return cls" + TableName + "Data.GetAll" + TableName + "();\r\n         }";
+        string Comment= $@"
+        /// <summary>
+        /// Retrieves all {TableName} from the database.
+        /// </summary>
+        /// <returns>A list of <see cref=""cls{TableName}DTO""/> objects representing all {TableName}.</returns>
+        ";
+        string Text= $"        static public List<cls{TableName}DTO> GetAll" + TableName + "()\r\n        {\r\n                return cls" + TableName + "Data.GetAll" + TableName + "();\r\n         }";
+        return Comment + Text;
     }
     private static string GeneratUpdate(string TableName)
     {
-        return "        private bool _Update" + TableName + "()\r\n " +
+        string Comment = $@"
+        /// <summary>
+        /// Updates an existing {TableName.Substring(0, TableName.Length - 1)}'s information in the database.
+        /// </summary>
+        /// <returns>True if the update was successful; otherwise, false.</returns>"+"\n";
+        string Text= "        private bool _Update" + TableName + "()\r\n " +
    "       {            return cls" + TableName + "Data.Update" + TableName + "Table(" + TableName.Substring(0, 1) + "DTO);\r\n         }";
+        return Comment + Text;
     }
     private static string GeneratFind(string TableName)
     {
-        string Text = $@" static  public cls{TableName} Find{TableName}(int { clsGeneralUtils.GetNameOfPrimaryKey(TableName) })   {{  
-            var {TableName} = clsUsersData.Find{TableName}( {clsGeneralUtils.GetNameOfPrimaryKey(TableName)});
-if({ TableName}!=null)
+        string Comment = $@"
+        /// <summary>
+        /// Finds a {TableName} by their {clsGeneralUtils.GetNameOfPrimaryKey(TableName)}.
+        /// </summary>
+        /// <param name=""{clsGeneralUtils.GetNameOfPrimaryKey(TableName)}"">The unique identifier for the {TableName.Substring(0, TableName.Length - 1)}.</param>
+        /// <returns>A <see cref=""cls{TableName}""/> object if the {TableName.Substring(0, TableName.Length - 1)} is found; otherwise, null.</returns>"+"\n";
+        string Text = $@" static  public cls{TableName} FindBy{clsGeneralUtils.GetNameOfPrimaryKey(TableName)}(int { clsGeneralUtils.GetNameOfPrimaryKey(TableName) })   {{  
+            var {TableName.Substring(0, TableName.Length - 1)} = clsUsersData.FindBy{clsGeneralUtils.GetNameOfPrimaryKey(TableName)}( {clsGeneralUtils.GetNameOfPrimaryKey(TableName)});
+if({TableName.Substring(0, TableName.Length - 1)}!=null)
 {{
-return new  cls{TableName}({TableName},enMode.Update) ;
+return new  cls{TableName}({TableName.Substring(0, TableName.Length - 1)},enMode.Update) ;
 }}
 else
 return null;
 }}
 ";
-        return Text;
+        return Comment+ Text;
     }
     private static string GeneratDelete(string TableName)
     {
-        return "         public  static bool Delete" + TableName + "(int " + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ")\r\n        {\r\n              return cls" + TableName + "Data.Delete" + TableName + "(" + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ");\r\n        }";
+        string Comment = $@"
+        /// <summary>
+        /// Deletes a {TableName.Substring(0, TableName.Length - 1)} from the database based on their {clsGeneralUtils.GetNameOfPrimaryKey(TableName)}
+        /// </summary>
+        /// <param name=""{clsGeneralUtils.GetNameOfPrimaryKey(TableName)}"">The unique identifier for the {TableName.Substring(0, TableName.Length - 1)} to delete.</param>
+        /// <returns>True if the deletion was successful; otherwise, false.</returns>"+"\n";
+        string Text= "         public  static bool Delete" + TableName + "(int " + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ")\r\n        {\r\n              return cls" + TableName + "Data.Delete" + TableName + "(" + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ");\r\n        }";
+        return Comment + Text;
     }
     private static string GeneratSave(string TableName)
     {
-        return "        public bool Save()\r\n        {\r\n                   switch (Mode)\r\n            {              case enMode.AddNew:\r\n                    if (_Add" + TableName + "())\r\n                    {\r\n                      Mode = enMode.Update;\r\n                        return true;\r\n                    }\r\n                    else\r\n                    {\r\n                        return false;\r\n                    }\r\n                case enMode.Update:\r                    return _Update" + TableName + "();\r\n\r\n            }\r\n\r\n            return false;\r\n                }";
+        string Comment = $@"
+        /// <summary>
+        /// Saves the current User record in the database based on the specified mode.
+        /// </summary>
+        /// <returns>True if the operation is successful; otherwise, false.</returns>"+"\n";
+        string Text= "        public bool Save()\r\n        {\r\n                   switch (Mode)\r\n            {              case enMode.AddNew:\r\n                    if (_Add" + TableName + "())\r\n                    {\r\n                      Mode = enMode.Update;\r\n                        return true;\r\n                    }\r\n                    else\r\n                    {\r\n                        return false;\r\n                    }\r\n                case enMode.Update:\r                    return _Update" + TableName + "();\r\n\r\n            }\r\n\r\n            return false;\r\n                }";
+        return Comment + Text;
     }
     public static string GeneratBadyCod(string TableName)
     {
