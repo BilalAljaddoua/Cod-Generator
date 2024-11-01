@@ -71,42 +71,65 @@ public class clsGeneratBussinessLayer
     }
     public static string GeneratEnums()
     {
-        return "        public enum enMode { AddNew = 0, Update = 1 };\n        public enMode Mode = enMode.AddNew;\n";
+        return "        public enum enMode { AddNew = 0, Update = 1 };\n        public enMode Mode  { set; get; }\n";
     }
-
-    private static string GeneratDefalutConstructor(string TableName)
-    {
-        string text = "    public       cls" + TableName + "(){";
+    public static string GeneratParameterConstructor(string TableName)
+    { 
+        string text = "        public   cls" + TableName + $"(cls{TableName}DTO {TableName}DTO,enMode nMode = enMode.AddNew){{";
         List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
         for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
         {
-            text += "        this." + dataTypeAndColumnNamesAndNullble[i].ColumnName + "=null ; \n"; 
+            text = text + "        this. " + dataTypeAndColumnNamesAndNullble[i].ColumnName + $"= {TableName}DTO." + dataTypeAndColumnNamesAndNullble[i].ColumnName + ";\n";
         }
-        text += "         Mode = enMode.AddNew;\n";
+
+        text += "         this.Mode = nMode;\r\n";
         return text + "}";
+    }
+
+    private static string GeneratDTO_Method(string TableName)
+    {
+        string text = $"    public       cls{TableName}DTO {TableName.Substring(0,1)}DTO {{\n";
+        List<clsGeneralUtils.stColumns> dataTypeAndColumnNamesAndNullble = clsGeneralUtils.GetDataTypeAndColumnNamesAndNullble(TableName);
+        text += $@" get{{return new cls{TableName}DTO("+"\n";
+        for (int i = 0; i < dataTypeAndColumnNamesAndNullble.Count; i++)
+        {
+            text += "        this." + dataTypeAndColumnNamesAndNullble[i].ColumnName + ", \n"; 
+        }
+        text=text.Substring(0, text.Length - 3);
+        return text + ");}}";
     }
     private static string GeneratAdd(string TableName)
     {
-        return "        private bool _Add" + TableName + "()\r\n        {    this." + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + " = cls" + TableName + "Data.AddTo" + TableName + "Table(" + GetAllColumnsFromTable_064BWithoutFirstOne(TableName, "", " ") + ");\r\n            return (this." + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + " != -1);\r\n        }";
+        return $@"        private bool _Add{ TableName } () 
+{{    this.{  clsGeneralUtils.GetNameOfPrimaryKey(TableName) } = cls{ TableName}Data.AddTo{ TableName}Table({TableName.Substring(0,1)}DTO);  
+return (this.{clsGeneralUtils.GetNameOfPrimaryKey(TableName)} != null);        }}";
     }
     private static string GeneratGetAll(string TableName)
     {
-        return "        static public DataTable GetAll" + TableName + "()\r\n        {\r\n                return cls" + TableName + "Data.GetAll" + TableName + "();\r\n         }";
+        return $"        static public List<cls{TableName}DTO> GetAll" + TableName + "()\r\n        {\r\n                return cls" + TableName + "Data.GetAll" + TableName + "();\r\n         }";
     }
     private static string GeneratUpdate(string TableName)
     {
-        return "        private bool _Update" + TableName + "()\r\n        {            bool IsSuccess= cls" + TableName + "Data.Update" + TableName + "Table(" + clsGeneralUtils.GetAllColumnNames(TableName, "", " ") + ");\r\n            return IsSuccess;\r\n        }";
+        return "        private bool _Update" + TableName + "()\r\n " +
+   "       {            return cls" + TableName + "Data.Update" + TableName + "Table(" + TableName.Substring(0, 1) + "DTO);\r\n         }";
     }
     private static string GeneratFind(string TableName)
     {
-        return "       static  public cls" + TableName + " Find" + TableName + "(int? " + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ")\r\n           {\r\n                 " +
-            SetDefaultValues(TableName) + "\r\n               if(cls" + TableName + "Data.Find" + TableName + "(" +
-            GetAllColumnsFromTable(TableName, "", " ref ") + "))\r\n               {\r\n                   return new cls" + TableName
-            + "(" + GetAllColumnsFromTable(TableName, "", " ") + ");\r\n               }\r\n             return null;\r\n    }";
+        string Text = $@" static  public cls{TableName} Find{TableName}(int { clsGeneralUtils.GetNameOfPrimaryKey(TableName) })   {{  
+            var {TableName} = clsUsersData.Find{TableName}( {clsGeneralUtils.GetNameOfPrimaryKey(TableName)});
+if({ TableName}!=null)
+{{
+return new  cls{TableName}({TableName},enMode.Update) ;
+}}
+else
+return null;
+}}
+";
+        return Text;
     }
     private static string GeneratDelete(string TableName)
     {
-        return "           static bool Delete" + TableName + "(int " + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ")\r\n        {\r\n              return cls" + TableName + "Data.Delete" + TableName + "(" + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ");\r\n        }";
+        return "         public  static bool Delete" + TableName + "(int " + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ")\r\n        {\r\n              return cls" + TableName + "Data.Delete" + TableName + "(" + clsGeneralUtils.GetNameOfPrimaryKey(TableName) + ");\r\n        }";
     }
     private static string GeneratSave(string TableName)
     {
@@ -117,8 +140,8 @@ public class clsGeneratBussinessLayer
         string text = "";
         text = text  + GeneratEnums();
         text = text + clsGeneralUtils.GeneratMethodesForClass(TableName);
-        text = text + GeneratDefalutConstructor(TableName);
-        text = text + clsGeneralUtils.GeneratParameterConstructor(TableName);
+        text = text + GeneratDTO_Method(TableName);
+        text = text + GeneratParameterConstructor(TableName);
         text = text + GeneratAdd(TableName);
         text = text + GeneratGetAll(TableName);
         text = text + GeneratUpdate(TableName);
@@ -128,6 +151,15 @@ public class clsGeneratBussinessLayer
     }
     public static string GeneratDataBussiness(string TableName)
     {
-        return "using System;\r\nusing System.Collections.Generic;\r\nusing System.Data;\r\nusing System.Linq;\r\nusing System.Text;\r\nusing System.Threading.Tasks;\r\nusing DataAccessLayer;\r\nnamespace Bussiness_Layer\r\n{\r\n    public class cls" + TableName + "\r\n    {\r\n" + GeneratBadyCod(TableName) + "\r\n    } \r\n    }\r\n";
+        return @"using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using DataAccessLayer;
+//Because the code is automatically generated, press (ctrl + K + D) to organize the code .      (-;
+
+namespace Bussiness_Layer{
+public class cls" + TableName + "\r\n    {\r\n" + GeneratBadyCod(TableName) + "\r\n    } \r\n    }\r\n";
     }
 }

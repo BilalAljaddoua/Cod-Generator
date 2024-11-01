@@ -2,10 +2,29 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using A_Layer;
 using GeneratSettings;
 public class clsDataAccessLAyer
 {
+    public static string GenerateLogError()
+    {
+        string Text = $@"  static  void LogError(string methodName, Exception ex)
+    {{
+        string source = ""{clsGeneralUtils.ApplicationName}"";
+        string logName = ""Application"";
+
+        if (!EventLog.SourceExists(source))
+        {{
+            EventLog.CreateEventSource(source, logName);
+        }}
+
+        EventLog.WriteEntry(source, $""Error in ""+methodName+"":""+ ex.Message, EventLogEntryType.Error);
+}}";
+
+        return Text;
+    }
+
     private static string AddAllParameterWithValueForInsert(string TabelName)
     {
         string text = "";
@@ -76,17 +95,7 @@ SqlParameter parameter = new SqlParameter(""@{PK.ColumnName}"", SqlDbType.Int)
                  command.ExecuteNonQuery();
                  {PK.ColumnName} = ({clsGeneralUtils.GetDataType(PK.DataType)})command.Parameters[""@{PK.ColumnName}""].Value;
              }}
-             catch (Exception ex) {{
-                     string source =""{clsGeneralUtils.ApplicationName}"";
-                    string logName = ""Application"";
-
-                    if (!EventLog.SourceExists(source))
-                    {{
-                        EventLog.CreateEventSource(source, logName);
-                    }}
-
-                    EventLog.WriteEntry(source, $""Error in AddUser  method: {{ex.Message}}"", EventLogEntryType.Error);
-                 }}
+             catch(Exception ex) {{  LogError(""AddNew Method"",ex); }}
 
              return {PK.ColumnName};
         }}
@@ -134,16 +143,7 @@ SqlParameter parameter = new SqlParameter(""@{PK.ColumnName}"", SqlDbType.Int)
                         }}
                  reader.Close();
              }}
-             catch (Exception ex) {{ 
-                     string source =""{clsGeneralUtils.ApplicationName}"";
-                    string logName = ""Application"";
-
-                    if (!EventLog.SourceExists(source))
-                    {{
-                        EventLog.CreateEventSource(source, logName);
-                    }}
-
-                    EventLog.WriteEntry(source, $""Error in FindUser  method: {{ex.Message}}"", EventLogEntryType.Error);}}
+             catch (Exception ex) {{  LogError(""Find Method"",ex); }}
  
              return {TabelName}DTO;
         }}
@@ -172,16 +172,7 @@ SqlParameter parameter = new SqlParameter(""@IsSuccess"", SqlDbType.Bit)
                  command.ExecuteNonQuery();
                  IsSuccess = (bool)command.Parameters[""@IsSuccess""].Value;
              }}
-             catch (Exception ex) {{ 
-                     string source =""{clsGeneralUtils.ApplicationName}"";
-                    string logName = ""Application"";
-
-                    if (!EventLog.SourceExists(source))
-                    {{
-                        EventLog.CreateEventSource(source, logName);
-                    }}
-
-                    EventLog.WriteEntry(source, $""Error in UpdateUser method: {{ex.Message}}"", EventLogEntryType.Error);}}
+             catch (Exception ex) {{  LogError(""Update Method"",ex); }}
 
            
              return IsSuccess;
@@ -213,17 +204,7 @@ SqlParameter parameter = new SqlParameter(""@IsSuccess"", SqlDbType.Bit)
                 command.ExecuteNonQuery();
                 IsSuccess = (bool)command.Parameters[""@IsSuccess""].Value;
             }}
-            catch (Exception ex) {{
-                     string source =""{clsGeneralUtils.ApplicationName}"";
-                    string logName = ""Application"";
-
-                    if (!EventLog.SourceExists(source))
-                    {{
-                        EventLog.CreateEventSource(source, logName);
-                    }}
-
-                    EventLog.WriteEntry(source, $""Error in DeleteUsers method: {{ex.Message}}"", EventLogEntryType.Error); }}
-
+            catch (Exception ex) {{  LogError(""Delete Method"",ex) ;}}
            
             return IsSuccess;
         }}
@@ -252,16 +233,7 @@ SqlParameter parameter = new SqlParameter(""@IsSuccess"", SqlDbType.Bit)
                       {TabelName}List.Add(new cls{TabelName}DTO( {GetInformationForRead(TabelName)}  ) );
                 }}
             }}
-            catch (Exception ex) {{ 
-                     string source =""{clsGeneralUtils.ApplicationName}"";
-                    string logName = ""Application"";
-
-                    if (!EventLog.SourceExists(source))
-                    {{
-                        EventLog.CreateEventSource(source, logName);
-                    }}
-
-                    EventLog.WriteEntry(source, $""Error in GetUsers method: {{ex.Message}}"", EventLogEntryType.Error);}}
+            catch(Exception ex) {{  LogError(""GetAll Method"",ex); }}
 
             return {TabelName}List;
         }}
@@ -275,6 +247,7 @@ SqlParameter parameter = new SqlParameter(""@IsSuccess"", SqlDbType.Bit)
     {
  
         string text = "";
+        text += GenerateLogError();
         text += GeneratSelectCod(TabelName);
         text += GeneratFindCod(TabelName);
         text += GeneratInsertCod(TabelName);

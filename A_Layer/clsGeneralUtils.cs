@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace A_Layer
 {
@@ -20,6 +21,7 @@ namespace A_Layer
 
             public bool AllowNull;
         }
+
         public static stColumns GetPK(string TableName)
         {
              SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
@@ -429,12 +431,12 @@ WHERE
             sqlConnection.Close();
             return text;
         }
-        private static string AddParameterWithDataType(string TableName, string Prefix = "")
+        public static string AddParameterWithDataType(string TableName, string Prefix = "")
         {
             string text = "";
             SqlConnection sqlConnection = new SqlConnection(clsSettingsClass.ConnectionString);
             sqlConnection.Open();
-            string cmdText = "\r\n                                                   SELECT COLUMN_NAME,DATA_TYPE \r\n                                                 FROM INFORMATION_SCHEMA.COLUMNS\r\n                                                 WHERE TABLE_NAME = '" + TableName + "' ";
+            string cmdText = "\r\n    SELECT COLUMN_NAME,DATA_TYPE \r\n FROM INFORMATION_SCHEMA.COLUMNS\r\n                                                 WHERE TABLE_NAME = '" + TableName + "' ";
             SqlCommand sqlCommand = new SqlCommand(cmdText, sqlConnection);
             SqlDataReader Reader = sqlCommand.ExecuteReader();
             while (Reader.Read())
